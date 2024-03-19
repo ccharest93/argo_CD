@@ -1,0 +1,27 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana-agent
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
+  project: ""
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  sources:
+  - repoURL: 'https://grafana.github.io/helm-charts'
+    chart: grafana-agent
+    targetRevision: 0.36.0
+    helm:
+      valueFiles:
+      - $values/grafana-agent.yaml
+  - repoURL: 'https://github.com/ccharest93/config-values.git'
+    ref: values

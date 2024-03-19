@@ -1,0 +1,27 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-workflows
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
+  project: ""
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argo
+  sources:
+  - repoURL: 'https://argoproj.github.io/argo-helm'
+    chart: argo-workflows
+    targetRevision: 0.40.10
+    helm:
+      valueFiles:
+      - $values/argo-workflows.yaml
+  - repoURL: 'https://github.com/ccharest93/config-values.git'
+    ref: values
